@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Collisions;
 using UnityEngine;
 
 public class PrismManager : MonoBehaviour
@@ -127,10 +128,13 @@ public class PrismManager : MonoBehaviour
         var prismA = collision.a;
         var prismB = collision.b;
 
+        bool Collided = GJK.Execute(prismA.points, prismB.points);
+        
+        
         
         collision.penetrationDepthVectorAB = Vector3.zero;
-
-        return true;
+        
+        return Collided;
     }
     
     #endregion
