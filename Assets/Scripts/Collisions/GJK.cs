@@ -98,7 +98,7 @@ namespace Collisions {
                 Vector3 somePoint = Support(Direction, pointsA, pointsB);
 
                 if (Vector3.Dot(somePoint, Direction) <= 0) {
-                    Debug.Log("Failed: " + iterationAmount);
+                    //Debug.Log("Failed: " + iterationAmount);
                     return false;
                 }
                 

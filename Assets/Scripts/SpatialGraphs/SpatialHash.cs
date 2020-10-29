@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SpatialHash : SpatialGraph {
-    Dictionary<int, ArrayList<Prism>> prisms;
+    //Dictionary<int, ArrayList<Prism>> prisms;
     int width = 0;
     int length = 0;
     int height = 0;
@@ -25,7 +25,7 @@ public class SpatialHash : SpatialGraph {
     }
 
     private int hash(Vector2 v) {
-        
+        return 0;
     }
 
     public Prism[] GetNeighbors(Prism p) {

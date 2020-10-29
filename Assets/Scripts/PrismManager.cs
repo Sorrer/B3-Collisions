@@ -21,10 +21,14 @@ public class PrismManager : MonoBehaviour
 
     private const float UPDATE_RATE = 0.5f;
 
+    private QuadTree _quadTree;
+
     #region Unity Functions
 
     void Start()
     {
+        _quadTree = GetComponent<QuadTree>();
+
         Random.InitState(0);    //10 for no collision
 
         prismParent = GameObject.Find("Prisms");
@@ -57,6 +61,8 @@ public class PrismManager : MonoBehaviour
             prismObjects.Add(prism);
             prismColliding.Add(prismScript, false);
         }
+
+        _quadTree.GenerateQuadTreeOfPts(prismObjects);
 
         StartCoroutine(Run());
     }
@@ -110,15 +116,39 @@ public class PrismManager : MonoBehaviour
 
     private IEnumerable<PrismCollision> PotentialCollisions()
     {
-        for (int i = 0; i < prisms.Count; i++) {
-            for (int j = i + 1; j < prisms.Count; j++) {
-                var checkPrisms = new PrismCollision();
-                checkPrisms.a = prisms[i];
-                checkPrisms.b = prisms[j];
+        for (int i = 0; i < _quadTree.quadTreeNodes.Length; i++)
+        {
+            if(_quadTree.quadTreeNodes[i] != null
+                && _quadTree.quadTreeNodes[i].type == QuadNodeType.LeafNode
+                && _quadTree.quadTreeNodes[i].occupyingPoints.Count > 0)
+            {
+                List<int> toCmpPrisms = new List<int>();
+                _quadTree.NeighbouringToCheckCells(i, ref toCmpPrisms);
+                //Debug.Log("Num Prisms to check: " + toCmpPrisms.Count);
 
-                yield return checkPrisms;
+                PrismCollision checkPrisms = new PrismCollision();
+                checkPrisms.a = prisms[_quadTree.quadTreeNodes[i].occupyingPointsIndex[0]];
+
+                for (int j = 0; j < toCmpPrisms.Count; j++)
+                {
+                    //Debug.Log("Comparing neighbours of cell : " + _quadTree.quadTreeNodes[i].ID
+                    //            + " Comparing prism nums: " + toCmpPrisms[0] + " : " + toCmpPrisms[j]);
+                    checkPrisms.b = prisms[toCmpPrisms[j]];
+
+                    yield return checkPrisms;
+                }
             }
         }
+
+        //for (int i = 0; i < prisms.Count; i++) {
+        //    for (int j = i + 1; j < prisms.Count; j++) {
+        //        var checkPrisms = new PrismCollision();
+        //        checkPrisms.a = prisms[i];
+        //        checkPrisms.b = prisms[j];
+        //
+        //        yield return checkPrisms;
+        //    }
+        //}
 
         yield break;
     }
