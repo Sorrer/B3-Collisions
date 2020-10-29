@@ -14,6 +14,8 @@ public class SpatialHash : SpatialGraph {
         length = l;
         height = h;
         cellSize = c;
+
+        prisms = new Dictionary<int, ArrayList>();
     }
 
     public void Insert(Prism p) {
@@ -36,7 +38,14 @@ public class SpatialHash : SpatialGraph {
     }
 
     private int hash(Vector3 v) {
-        return (int)(v.x * length * height + v.y * length + v.z);
+        int cx = (int)v.x / cellSize;
+        int cy = (int)v.y / cellSize;
+        int cz = (int)v.z / cellSize;
+
+        int cl = length / cellSize;
+        int ch = height / cellSize;
+        
+        return (int)(cx * cl * ch + cy * cl + cz);
     }
 
     public Prism[] GetNeighbors(Prism p) {
