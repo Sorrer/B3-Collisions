@@ -127,15 +127,19 @@ public class PrismManager : MonoBehaviour
                 //Debug.Log("Num Prisms to check: " + toCmpPrisms.Count);
 
                 PrismCollision checkPrisms = new PrismCollision();
-                checkPrisms.a = prisms[_quadTree.quadTreeNodes[i].occupyingPointsIndex[0]];
+                int aIndex = _quadTree.quadTreeNodes[i].occupyingPointsIndex[0];
+                checkPrisms.a = prisms[aIndex];
 
                 for (int j = 0; j < toCmpPrisms.Count; j++)
                 {
                     //Debug.Log("Comparing neighbours of cell : " + _quadTree.quadTreeNodes[i].ID
                     //            + " Comparing prism nums: " + toCmpPrisms[0] + " : " + toCmpPrisms[j]);
-                    checkPrisms.b = prisms[toCmpPrisms[j]];
+                    if(toCmpPrisms[j] != aIndex)
+                    {
+                        checkPrisms.b = prisms[toCmpPrisms[j]];
 
-                    yield return checkPrisms;
+                        yield return checkPrisms;
+                    }
                 }
             }
         }

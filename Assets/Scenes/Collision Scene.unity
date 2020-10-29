@@ -145,7 +145,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 770520998}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3, y: 0, z: -2}
+  m_LocalPosition: {x: -7, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -357,7 +357,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prismCount: 50
-  prismRegionRadiusXZ: 5
+  prismRegionRadiusXZ: 10
   prismRegionRadiusY: 0
   maxPrismScaleXZ: 3
   maxPrismScaleY: 0
@@ -393,8 +393,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxDepth: 6
   maxPointsInCell: 1
-  totalSize: 5
-  drawFullTree: 0
+  totalSize: 10
+  drawFullTree: 1
   drawOnlyThisDepth: 0
   testPoint: {fileID: 770520999}
   lastLayerIndex: 0

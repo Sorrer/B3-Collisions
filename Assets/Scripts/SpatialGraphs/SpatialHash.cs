@@ -36,7 +36,7 @@ public class SpatialHash : SpatialGraph {
     }
 
     private int hash(Vector3 v) {
-        return v.x * length * height + v.y * length + v.z;
+        return (int)(v.x * length * height + v.y * length + v.z);
     }
 
     public Prism[] GetNeighbors(Prism p) {
