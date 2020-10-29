@@ -49,8 +49,17 @@ public class SpatialHash : SpatialGraph {
     }
 
     public Prism[] GetNeighbors(Prism p) {
-        Prism[] ret = {};
+        ArrayList ret = new ArrayList();
 
-        return ret;
+        foreach(Vector3 v in p.points) {
+            int i = hash(v);
+            
+            ret.AddRange(prisms[i]);
+
+            while (ret.Contains(p))
+                ret.Remove(p);
+        }
+
+        return (Prism[])ret.ToArray(typeof(Prism));
     }
 }
