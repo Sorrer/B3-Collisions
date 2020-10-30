@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum QuadNodeType
+public enum OcNodeType
 {
     TreeNode,
     LeafNode
 }
 
-public class QuadNode
+public class OcNode
 {
     public int ID = 0;
 
@@ -20,11 +20,11 @@ public class QuadNode
     public List<int> occupyingPointsIndex;
     public List<Vector3> occupyingPoints;
 
-    private Vector3[] corners = new Vector3[4];
+    private Vector3[] corners = new Vector3[8];
 
-    public QuadNodeType type;
+    public OcNodeType type;
 
-    public QuadNode[] children;
+    public OcNode[] children;
 
     public float Size()
     {
@@ -40,9 +40,11 @@ public class QuadNode
     public bool BoundsPoint(Vector3 point)
     {
         return (corners[0].x <= point.x
+             && corners[0].y <= point.y
              && corners[0].z <= point.z
-             && corners[3].x >= point.x
-             && corners[3].z >= point.z);
+             && corners[7].x >= point.x
+             && corners[7].z >= point.z
+             && corners[7].y >= point.y);
     }
 
     private void FillCorners()
@@ -55,22 +57,32 @@ public class QuadNode
         {
             for (int y = -1; y <= 1; y += 2)
             {
-                corners[cornerIndex] = center + new Vector3(x, 0, y) * _size;
-                cornerIndex++;
+                for (int z = -1; z <= 1; z += 2)
+                {
+                    corners[cornerIndex] = center + new Vector3(x, y, z) * _size;
+                    cornerIndex++;
+                }
             }
         }
     }
 
-    public void DrawQuad(Color drawColour)
+    public void DrawOc(Color drawColour)
     {
+        Debug.DrawLine(corners[0], corners[1], drawColour);
+        Debug.DrawLine(corners[1], corners[5], drawColour);
+        Debug.DrawLine(corners[5], corners[4], drawColour);
+        Debug.DrawLine(corners[4], corners[0], drawColour);
         Debug.DrawLine(corners[0], corners[2], drawColour);
         Debug.DrawLine(corners[2], corners[3], drawColour);
+        Debug.DrawLine(corners[3], corners[7], drawColour);
+        Debug.DrawLine(corners[7], corners[6], drawColour);
+        Debug.DrawLine(corners[6], corners[4], drawColour);
+        Debug.DrawLine(corners[7], corners[5], drawColour);
         Debug.DrawLine(corners[3], corners[1], drawColour);
-        Debug.DrawLine(corners[1], corners[0], drawColour);
     }
 }
 
-public class QuadTree : MonoBehaviour
+public class Octree : MonoBehaviour
 {
     public float maxDepth = 4.0f;
     public int maxPointsInCell = 1;
@@ -90,11 +102,11 @@ public class QuadTree : MonoBehaviour
 
     public int clampMaxDepth = 5;
 
-    public QuadNode root;
+    public OcNode root;
 
     public int offset = 1;
 
-    public List<QuadNode> leafNodes = new List<QuadNode>();
+    public List<OcNode> leafNodes = new List<OcNode>();
 
     private void Update()
     {
@@ -102,7 +114,10 @@ public class QuadTree : MonoBehaviour
         {
             if (drawFullTree)
             {
-                leafNodes[i].DrawQuad(Color.yellow);
+                if(leafNodes[i].depth == drawOnlyThisDepth)
+                {
+                    leafNodes[i].DrawOc(Color.yellow);
+                }
             }
             //Debug.Log(leafNodes[i].ID +" : " + leafNodes[i].occupyingPoints.Count);
             //if (leafNodes[i].occupyingPoints.Count > 0)
@@ -116,22 +131,22 @@ public class QuadTree : MonoBehaviour
 
         //DrawQuadTreeFrm(root);
 
-        //int testIndex = GetBoundingQuadNodeIndex(testPoint.position, root);
-        //
-        ////Debug.Log(quadTreeNodes[testIndex].ID);
-        //List<int> testPointNeighbours = new List<int>();
-        ////Debug.Log(D_NeighbouringToCheckCells(ValidQuadNodeOfID(root, GetIntsFromNum(testIndex), offset), ref testPointNeighbours).Count);
-        //D_NeighbouringToCheckCells(ValidQuadNodeOfID(root, GetIntsFromNum(testIndex), offset), ref testPointNeighbours);
-        //for (int i = 0; i < testPointNeighbours.Count; i++)
-        //{
-        //    //Debug.Log(testPointNeighbours[i]);
-        //    QuadNode curQuad = ValidQuadNodeOfID(root, GetIntsFromNum(testPointNeighbours[i]), 0);
-        //    if(curQuad != null)
-        //    {
-        //        //Debug.Log("Drawing quad : " + curQuad.ID);
-        //        curQuad.DrawQuad(Color.red);
-        //    }
-        //}
+        int testIndex = GetBoundingQuadNodeIndex(testPoint.position, root);
+        
+        //Debug.Log(quadTreeNodes[testIndex].ID);
+        List<int> testPointNeighbours = new List<int>();
+        //Debug.Log(D_NeighbouringToCheckCells(ValidQuadNodeOfID(root, GetIntsFromNum(testIndex), offset), ref testPointNeighbours).Count);
+        D_NeighbouringToCheckCells(GetOcFrmId(GetIntsFromNum(testIndex), offset), ref testPointNeighbours);
+        for (int i = 0; i < testPointNeighbours.Count; i++)
+        {
+            //Debug.Log(testPointNeighbours[i]);
+            OcNode curQuad = GetOcFrmId(GetIntsFromNum(testPointNeighbours[i]), offset);
+            if(curQuad != null)
+            {
+                //Debug.Log("Drawing quad : " + curQuad.ID);
+                curQuad.DrawOc(Color.cyan);
+            }
+        }
 
         //List<QuadNode> leafsOfThis = new List<QuadNode>();
         //LeafNodes(GetQuadFrmID(testIndex, offset), ref leafsOfThis);
@@ -147,9 +162,9 @@ public class QuadTree : MonoBehaviour
         //Debug.Log(lastLayerIndex + 1);
     }
 
-    private int GetBoundingQuadNodeIndex(Vector3 point, QuadNode beginNode)
+    private int GetBoundingQuadNodeIndex(Vector3 point, OcNode beginNode)
     {
-        if(beginNode == null)
+        if (beginNode == null)
         {
             return -1;
         }
@@ -159,9 +174,9 @@ public class QuadTree : MonoBehaviour
             return beginNode.ID;
         }
 
-        QuadNode curNode = beginNode;
+        OcNode curNode = beginNode;
         bool found = false;
-        while(curNode.children != null)
+        while (curNode.children != null)
         {
             found = false;
             for (int i = 0; i < curNode.children.Length; i++)
@@ -182,7 +197,7 @@ public class QuadTree : MonoBehaviour
         return curNode.ID;
     }
 
-    public void GenerateQuadTreeOfPts(List<GameObject> points, ref QuadNode root)
+    public void GenerateQuadTreeOfPts(List<GameObject> points, ref OcNode root)
     {
         //maxDepth = ((int)totalSize / (int)(maxPrizimSIze / 2));
 
@@ -196,9 +211,9 @@ public class QuadTree : MonoBehaviour
         //Debug.Log(lengthQuadTree);
     }
 
-    private void InsertPoint(Vector3 point, int pointIndex, ref QuadNode insertIn, QuadNode parentQuad, int childIndex)
+    private void InsertPoint(Vector3 point, int pointIndex, ref OcNode insertIn, OcNode parentQuad, int childIndex)
     {
-        if(insertIn == null)
+        if (insertIn == null)
         {
             CreateQuadNode(ref insertIn, parentQuad, childIndex);
         }
@@ -213,21 +228,21 @@ public class QuadTree : MonoBehaviour
         && (insertIn.occupyingPoints.Count > maxPointsInCell || insertIn.children != null))
         {
             //Debug.Log("Added to new child in : " + insertIn.ID);
-            insertIn.type = QuadNodeType.TreeNode;
+            insertIn.type = OcNodeType.TreeNode;
 
             if (insertIn.children == null)
             {
                 //Debug.Log("Subdivided : " + insertIn.ID);
-                insertIn.children = new QuadNode[4];
+                insertIn.children = new OcNode[8];
             }
 
             //Debug.Log(insertIn.occupyingPoints.Count);
-            for (int j = 0; j < 4; j++)
+            for (int j = 0; j < 8; j++)
             {
                 if (insertIn.children[j] == null)
                 {
                     CreateQuadNode(ref insertIn.children[j], insertIn, j);
-                    insertIn.type = QuadNodeType.LeafNode;
+                    insertIn.type = OcNodeType.LeafNode;
                     //Debug.Log("Created null child : " + insertIn.children[j].ID);
                 }
 
@@ -242,7 +257,7 @@ public class QuadTree : MonoBehaviour
                     {
                         //Debug.Log("ASKING TO ADD point : " + ptToAdd + " in child : " + insertIn.children[j].ID);
                         InsertPoint(ptToAdd, ptIndexToAdd, ref insertIn.children[j], insertIn, j);
-                        insertIn.children[j].type = QuadNodeType.LeafNode;
+                        insertIn.children[j].type = OcNodeType.LeafNode;
                     }
                 }
             }
@@ -251,23 +266,23 @@ public class QuadTree : MonoBehaviour
         }
     }
 
-    private void CreateQuadNode(ref QuadNode createNode, QuadNode parentNode, int childIndex)
+    private void CreateQuadNode(ref OcNode createNode, OcNode parentNode, int childIndex)
     {
         float curSize = totalSize;
 
-        createNode = new QuadNode();
+        createNode = new OcNode();
         createNode.occupyingPoints = new List<Vector3>();
         createNode.occupyingPointsIndex = new List<int>();
 
         if (parentNode != null)
         {
-            int quadPos = childIndex + 1;
+            int ocPos = childIndex + 1;
 
             int quadDepth = parentNode.depth + 1;
             createNode.depth = quadDepth;
 
-            int keyQP = quadPos == 0 ? 4 : quadPos;
-            createNode.ID = keyQP + 10 * parentNode.ID;
+            int keyOP = ocPos == 0 ? 8 : ocPos;
+            createNode.ID = keyOP + 10 * parentNode.ID;
 
             //if(createNode.ID == 45212)
             //{
@@ -282,21 +297,37 @@ public class QuadTree : MonoBehaviour
 
             Vector3 parentCenter = parentNode.center;
 
-            if (quadPos == 1)
+            if (ocPos == 1)
             {
-                centerOfset = new Vector3(-1.0f, 0.0f, 1.0f) * curSize;
+                centerOfset = new Vector3(-1.0f, -1.0f, -1.0f) * curSize;
             }
-            else if (quadPos == 2)
+            else if (ocPos == 2)
             {
-                centerOfset = new Vector3(-1.0f, 0.0f, -1.0f) * curSize;
+                centerOfset = new Vector3(-1.0f, -1.0f, 1.0f) * curSize;
             }
-            else if (quadPos == 3)
+            else if (ocPos == 3)
             {
-                centerOfset = new Vector3(1.0f, 0.0f, -1.0f) * curSize;
+                centerOfset = new Vector3(-1.0f, 1.0f, -1.0f) * curSize;
+            }
+            else if(ocPos == 4)
+            {
+                centerOfset = new Vector3(-1.0f, 1.0f, 1.0f) * curSize;
+            }
+            else if (ocPos == 5)
+            {
+                centerOfset = new Vector3(1.0f, -1.0f, -1.0f) * curSize;
+            }
+            else if (ocPos == 6)
+            {
+                centerOfset = new Vector3(1.0f, -1.0f, 1.0f) * curSize;
+            }
+            else if (ocPos == 7)
+            {
+                centerOfset = new Vector3(1.0f, 1.0f, -1.0f) * curSize;
             }
             else
             {
-                centerOfset = new Vector3(1.0f, 0.0f, 1.0f) * curSize;
+                centerOfset = new Vector3(1.0f, 1.0f, 1.0f) * curSize;
             }
 
             createNode.center = parentCenter + centerOfset;
@@ -310,7 +341,7 @@ public class QuadTree : MonoBehaviour
         }
     }
 
-    public void NeighbouringToCheckCells(QuadNode quadNode, ref List<int> returnIndecies)
+    public void NeighbouringToCheckCells(OcNode quadNode, ref List<int> returnIndecies)
     {
         returnIndecies = new List<int>();
 
@@ -358,7 +389,7 @@ public class QuadTree : MonoBehaviour
         }
     }
 
-    public List<int> D_NeighbouringToCheckCells(QuadNode quadNode, ref List<int> nodeIndecies)
+    public List<int> D_NeighbouringToCheckCells(OcNode quadNode, ref List<int> nodeIndecies)
     {
         nodeIndecies = new List<int>();
 
@@ -372,7 +403,7 @@ public class QuadTree : MonoBehaviour
         int curID = quadNode.ID;
         int[] nodeIDs = GetIntsFromNum(curID);
 
-        while(nodeIDs.Length > maxNeighbourDepth)
+        while (nodeIDs.Length > maxNeighbourDepth)
         {
             nodeIDs = ParentId(nodeIDs);
         }
@@ -420,7 +451,7 @@ public class QuadTree : MonoBehaviour
 
         for (int i = 0; i < nums.Length; i++)
         {
-            if(nums[i] != 1 && nums[i] != 4)
+            if (nums[i] != 3 && nums[i] != 4 && nums[i] != 7 && nums[i] != 8)
             {
                 return true;
             }
@@ -438,7 +469,25 @@ public class QuadTree : MonoBehaviour
 
         for (int i = 0; i < nums.Length; i++)
         {
-            if (nums[i] != 1 && nums[i] != 2)
+            if (nums[i] != 1 && nums[i] != 2 && nums[i] != 3 && nums[i] != 4)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
+    private bool HasForward(int[] nums)
+    {
+        if (nums.Length == 0)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < nums.Length; i++)
+        {
+            if (nums[i] != 2 && nums[i] != 4 && nums[i] != 6 && nums[i] != 8)
             {
                 return true;
             }
@@ -456,7 +505,7 @@ public class QuadTree : MonoBehaviour
 
         for (int i = 0; i < nums.Length; i++)
         {
-            if (nums[i] != 2 && nums[i] != 3)
+            if (nums[i] != 1 && nums[i] != 2 && nums[i] != 5 && nums[i] != 6)
             {
                 return true;
             }
@@ -465,15 +514,15 @@ public class QuadTree : MonoBehaviour
         return false;
     }
 
-    private void AddNeighbourNodeToList(int[] nodeID, ref List<int> prismIndecies, QuadNode beginQuad)
+    private void AddNeighbourNodeToList(int[] nodeID, ref List<int> prismIndecies, OcNode beginQuad)
     {
         if (nodeID == null) return;
         if (nodeID.Length == 0) return;
 
-        QuadNode curQuad = GetQuadFrmID(nodeID, offset);
+        OcNode curOc = GetOcFrmId(nodeID, offset);
 
-        List<QuadNode> leafNodes = new List<QuadNode>();
-        LeafNodes(curQuad, ref leafNodes);
+        List<OcNode> leafNodes = new List<OcNode>();
+        LeafNodes(curOc, ref leafNodes);
 
         for (int i = 0; i < leafNodes.Count; i++)
         {
@@ -495,18 +544,18 @@ public class QuadTree : MonoBehaviour
         return parentID;
     }
 
-    private void D_AddNeighbourNodeToList(int[] nodeID, ref List<int> indecies, ref List<int> prismIndecies, QuadNode startFrm)
+    private void D_AddNeighbourNodeToList(int[] nodeID, ref List<int> indecies, ref List<int> prismIndecies, OcNode startFrm)
     {
         if (nodeID.Length == 0) return;
 
-        QuadNode curQuad = GetQuadFrmID(nodeID, offset);
+        OcNode curQuad = GetOcFrmId(nodeID, offset);
 
-        List<QuadNode> leafNodes = new List<QuadNode>();
+        List<OcNode> leafNodes = new List<OcNode>();
         LeafNodes(curQuad, ref leafNodes);
 
         for (int i = 0; i < leafNodes.Count; i++)
         {
-            if(leafNodes[i].occupyingPoints.Count >= 0)
+            if (leafNodes[i].occupyingPoints.Count >= 0)
             {
                 indecies.Add(leafNodes[i].ID);
                 prismIndecies.AddRange(leafNodes[i].occupyingPointsIndex);
@@ -519,7 +568,7 @@ public class QuadTree : MonoBehaviour
         int startFlipFrmIndex = a.Length - 1;
         for (int i = a.Length - 1; i >= 0; i--)
         {
-            if (a[i] == 1 || a[i] == 2)
+            if (a[i] == 1 || a[i] == 2 || a[i] == 3 || a[i] == 4)
             {
                 startFlipFrmIndex = i - 1;
             }
@@ -547,7 +596,7 @@ public class QuadTree : MonoBehaviour
         int startFlipFrmIndex = a.Length - 1; ;
         for (int i = a.Length - 1; i >= 0; i--)
         {
-            if (a[i] == 1 || a[i] == 4)
+            if (a[i] == 3 || a[i] == 4 || a[i] == 7 | a[i] == 8)
             {
                 startFlipFrmIndex = i - 1;
             }
@@ -576,7 +625,7 @@ public class QuadTree : MonoBehaviour
         int startFlipFrmIndex = a.Length - 1; ;
         for (int i = a.Length - 1; i >= 0; i--)
         {
-            if (a[i] == 2 || a[i] == 3)
+            if (a[i] == 1 || a[i] == 2 || a[i] == 5 || a[i] == 6)
             {
                 startFlipFrmIndex = i - 1;
             }
@@ -605,13 +654,21 @@ public class QuadTree : MonoBehaviour
         switch (a)
         {
             case 1:
-                return 2;
-            case 2:
-                return 1;
-            case 3:
-                return 4;
-            case 4:
                 return 3;
+            case 2:
+                return 4;
+            case 3:
+                return 1;
+            case 4:
+                return 2;
+            case 5:
+                return 7;
+            case 6:
+                return 8;
+            case 7:
+                return 5;
+            case 8:
+                return 6;
             default:
                 return -1;
         }
@@ -622,13 +679,21 @@ public class QuadTree : MonoBehaviour
         switch (a)
         {
             case 1:
-                return 4;
+                return 5;
             case 2:
-                return 3;
+                return 6;
             case 3:
-                return 2;
+                return 7;
             case 4:
+                return 8;
+            case 5:
                 return 1;
+            case 6:
+                return 2;
+            case 7:
+                return 3;
+            case 8:
+                return 4;
             default:
                 return -1;
         }
@@ -661,32 +726,32 @@ public class QuadTree : MonoBehaviour
         int totalNodes = 0;
         for (int i = 0; i <= _maxDepth; i++)
         {
-            totalNodes += (int)Mathf.Pow(4, i);
+            totalNodes += (int)Mathf.Pow(8, i);
         }
 
         return totalNodes;
     }
 
-    private void DrawQuadTreeFrm(QuadNode startFrm)
+    private void DrawOcTree(OcNode startFrm)
     {
-        if(startFrm != null && startFrm.children != null)
+        if (startFrm != null && startFrm.children != null)
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 8; i++)
             {
-                if(startFrm.children[i] != null && startFrm.children[i].type == QuadNodeType.LeafNode)
+                if (startFrm.children[i] != null && startFrm.children[i].type == OcNodeType.LeafNode)
                 {
-                    startFrm.children[i].DrawQuad(Color.cyan);
+                    startFrm.children[i].DrawOc(Color.cyan);
                 }
-                DrawQuadTreeFrm(startFrm.children[i]);
+                DrawOcTree(startFrm.children[i]);
             }
         }
     }
 
-    public void LeafNodes(QuadNode startFrm, ref List<QuadNode> leafNodes)
+    public void LeafNodes(OcNode startFrm, ref List<OcNode> leafNodes)
     {
         if (startFrm != null && startFrm.children != null)
         {
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 8; i++)
             {
                 //if (startFrm.children[i] != null && startFrm.children[i].type == QuadNodeType.LeafNode)
                 //{
@@ -695,18 +760,19 @@ public class QuadTree : MonoBehaviour
                 //}
                 LeafNodes(startFrm.children[i], ref leafNodes);
             }
-        }else if(startFrm != null && startFrm.children == null)
+        }
+        else if (startFrm != null && startFrm.children == null)
         {
             leafNodes.Add(startFrm);
         }
     }
 
-    private void DrawQuadNodeUsnID(int[] ID)
+    private void DrawOcNodeUsingID(int[] ID)
     {
-        QuadNode curNode = root.children[ID[0] - 1];
+        OcNode curNode = root.children[ID[0] - 1];
         int nxtIndex = 1;
 
-        while(nxtIndex < ID.Length && curNode.children != null)
+        while (nxtIndex < ID.Length && curNode.children != null)
         {
             curNode = curNode.children[ID[nxtIndex] - 1];
             nxtIndex++;
@@ -716,14 +782,14 @@ public class QuadTree : MonoBehaviour
             }
         }
 
-        curNode.DrawQuad(Color.yellow);
+        curNode.DrawOc(Color.yellow);
     }
 
-    private QuadNode GetQuadFrmID(int ID, int ofsett)
+    private OcNode GetOcFrmID(int ID, int ofsett)
     {
         if (ID <= 0) return null;
         int[] nodeID = GetIntsFromNum(ID);
-        QuadNode curNode = root.children[nodeID[0] - 1];
+        OcNode curNode = root.children[nodeID[0] - 1];
         int nxtIndex = 1;
 
         while (nxtIndex < (nodeID.Length - ofsett) && curNode.children != null)
@@ -740,10 +806,10 @@ public class QuadTree : MonoBehaviour
 
     }
 
-    private QuadNode GetQuadFrmID(int[] nodeID, int ofsett)
+    private OcNode GetOcFrmId(int[] nodeID, int ofsett)
     {
         if (nodeID.Length <= 0) return null;
-        QuadNode curNode = root.children[nodeID[0] - 1];
+        OcNode curNode = root.children[nodeID[0] - 1];
         int nxtIndex = 1;
 
         while (nxtIndex < (nodeID.Length - ofsett) && curNode.children != null)

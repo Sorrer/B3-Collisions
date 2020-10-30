@@ -22,12 +22,14 @@ public class PrismManager : MonoBehaviour
     private const float UPDATE_RATE = 0.5f;
 
     private QuadTree _quadTree;
+    private Octree _ocTree;
 
     #region Unity Functions
 
     void Start()
     {
         _quadTree = GetComponent<QuadTree>();
+        _ocTree = GetComponent<Octree>();
 
         Random.InitState(0);    //10 for no collision
 
@@ -64,6 +66,7 @@ public class PrismManager : MonoBehaviour
 
         //_quadTree.GenerateQuadTreeOfPts(prismObjects);
         _quadTree.GenerateQuadTreeOfPts(prismObjects, ref _quadTree.root);
+        _ocTree.GenerateQuadTreeOfPts(prismObjects, ref _ocTree.root);
 
         StartCoroutine(Run());
     }

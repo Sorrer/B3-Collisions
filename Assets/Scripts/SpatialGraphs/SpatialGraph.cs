@@ -10,9 +10,11 @@ public struct SpatialObject {
     public Prism prism; //Contains the data for the object
 }
 
-
 public interface SpatialGraph {
+
     void Insert(Prism p);
+
     void Remove(Prism p);
+
     Prism[] GetNeighbors(Prism p);
 }
