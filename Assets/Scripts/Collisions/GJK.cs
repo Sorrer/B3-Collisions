@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Xml.Schema;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SocialPlatforms.Impl;
@@ -250,8 +251,10 @@ namespace Collisions {
             
             return false;
         }
-
-        public static bool Execute(Vector3[] pointsA, Vector3[] pointsB) {
+    
+        
+        
+        public static bool Execute(Vector3[] pointsA, Vector3[] pointsB, [CanBeNull] out List<Vector3> LastSimplex) {
             
             List<Vector3> points = new List<Vector3>();
             
@@ -269,13 +272,15 @@ namespace Collisions {
                 Vector3 somePoint = Support(direction, pointsA, pointsB);
                 
                 if (Vector3.Dot(somePoint, direction) <= 0) {
-                    if(iterationAmount > 1)Debug.Log("Failed: " + iterationAmount + " | " + points.Count + " " + direction);
+                    //if(iterationAmount > 1)Debug.Log("Failed: " + iterationAmount + " | " + points.Count + " " + direction);
+                    LastSimplex = points;
 
                     return false;
                 }
                 
                 if(iterationAmount > 1000) {
                     Debug.Log("Failed");
+                    LastSimplex = points;
                     return false;
                 }
                 
@@ -285,11 +290,10 @@ namespace Collisions {
                     points.Add(somePoint);
                 }
 
-                Debug.Log("Before" + direction);
                 if (ContainsOrigin(ref direction, ref points)) {
+                    LastSimplex = points;
                     return true;
                 }
-                Debug.Log("After" + direction);
             }
         }
         
