@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Collisions;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class PrismManager : MonoBehaviour
 {
@@ -19,7 +21,7 @@ public class PrismManager : MonoBehaviour
     private GameObject prismParent;
     private Dictionary<Prism,bool> prismColliding = new Dictionary<Prism, bool>();
 
-    private const float UPDATE_RATE = 0.5f;
+    private const float UPDATE_RATE = 0.5f; // Default 0.5f
 
     private QuadTree _quadTree;
     private Octree _ocTree;
@@ -196,11 +198,23 @@ public class PrismManager : MonoBehaviour
         var prismA = collision.a;
         var prismB = collision.b;
 
-        bool Collided = GJK.Execute(prismA.points, prismB.points);
+        GJK.Has3Dimensions = Math.Abs(maxPrismScaleY) > float.Epsilon;
+        List<Vector3> Simplex;
+        bool Collided = GJK.Execute(prismA.points, prismB.points, out Simplex);
+
+        if (Collided) {
+            float depth;
+            Vector3 normal;
+            EPA.Execute(prismA.points, prismB.points, Simplex, out depth, out normal);
+            collision.penetrationDepthVectorAB = depth * normal;
+            
+            Debug.Log("Depth = " + depth);
+        } else {
+            collision.penetrationDepthVectorAB = Vector3.zero;
+        }
         
         
         
-        collision.penetrationDepthVectorAB = Vector3.zero;
         
         return Collided;
     }
