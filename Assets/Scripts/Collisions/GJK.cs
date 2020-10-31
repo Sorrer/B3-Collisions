@@ -265,11 +265,12 @@ namespace Collisions {
             
             while (true) {
                 iterationAmount++;
+
                 Vector3 somePoint = Support(direction, pointsA, pointsB);
                 
                 if (Vector3.Dot(somePoint, direction) <= 0) {
                     if(iterationAmount > 1)Debug.Log("Failed: " + iterationAmount + " | " + points.Count + " " + direction);
-                    
+
                     return false;
                 }
                 

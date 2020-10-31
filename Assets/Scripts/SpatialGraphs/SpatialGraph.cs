@@ -8,13 +8,13 @@ public struct SpatialObject {
     public Vector3 bounding_box; //Size of bounding box
 
     public Prism prism; //Contains the data for the object
-
-
 }
 
-
 public interface SpatialGraph {
-    void Insert(SpatialObject spatialObject);
-    void Remove(SpatialObject spatialObject);
-    SpatialObject[] GetNeighbors(SpatialObject spatialObject);
+
+    void Insert(Prism p);
+
+    void Remove(Prism p);
+
+    Prism[] GetNeighbors(Prism p);
 }
