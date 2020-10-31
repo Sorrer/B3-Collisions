@@ -188,6 +188,9 @@ public class QuadTree : MonoBehaviour
 
         //maxDepth = Mathf.Clamp(maxDepth, 0, clampMaxDepth);
 
+        leafNodes.Clear();
+        root = null;
+
         for (int i = 0; i < points.Count; i++)
         {
             InsertPoint(points[i].transform.position, i, ref root, null, -1);

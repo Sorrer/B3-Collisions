@@ -67,8 +67,7 @@ public class PrismManager : MonoBehaviour
         }
 
         //_quadTree.GenerateQuadTreeOfPts(prismObjects);
-
-        _ocTree.GenerateQuadTreeOfPts(prismObjects, ref _ocTree.root);
+        //_ocTree.GenerateQuadTreeOfPts(prismObjects, ref _ocTree.root);
 
         StartCoroutine(Run());
     }
@@ -92,6 +91,7 @@ public class PrismManager : MonoBehaviour
 
     IEnumerator Run()
     {
+
         yield return null;
         while (true)
         {
