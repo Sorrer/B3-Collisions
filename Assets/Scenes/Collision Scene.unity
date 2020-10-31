@@ -395,7 +395,7 @@ MonoBehaviour:
   maxDepth: 6
   maxPointsInCell: 1
   maxNeighbourDepth: 3
-  totalSize: 5
+  totalSize: 8
   drawFullTree: 1
   drawOnlyThisDepth: 0
   testPoint: {fileID: 770520999}

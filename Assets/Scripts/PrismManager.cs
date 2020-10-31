@@ -26,13 +26,15 @@ public class PrismManager : MonoBehaviour
     private QuadTree _quadTree;
     private Octree _ocTree;
 
+    private SpatialHash spatialHash;
+    
     #region Unity Functions
 
     void Start()
     {
         _quadTree = GetComponent<QuadTree>();
         _ocTree = GetComponent<Octree>();
-
+        
         Random.InitState(0);    //10 for no collision
 
         prismParent = GameObject.Find("Prisms");
@@ -206,7 +208,7 @@ public class PrismManager : MonoBehaviour
             EPA.Execute(prismA.points, prismB.points, Simplex, out depth, out normal);
             collision.penetrationDepthVectorAB = depth * normal;
             
-            Debug.Log("Depth = " + depth);
+            //Debug.Log("Depth = " + depth);
         } else {
             collision.penetrationDepthVectorAB = Vector3.zero;
         }
@@ -237,8 +239,8 @@ public class PrismManager : MonoBehaviour
         {
             collision.b.points[i] += pushB;
         }
-        //prismObjA.transform.position += pushA;
-        //prismObjB.transform.position += pushB;
+        prismObjA.transform.position += pushA;
+        prismObjB.transform.position += pushB;
 
         Debug.DrawLine(prismObjA.transform.position, prismObjA.transform.position + collision.penetrationDepthVectorAB, Color.cyan, UPDATE_RATE);
     }
