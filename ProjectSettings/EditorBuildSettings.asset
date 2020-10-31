@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Collision Scene.unity
+    guid: 843cc200f499b30468b75dc38b5cd19e
   m_configObjects: {}

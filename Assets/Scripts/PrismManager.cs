@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Collisions;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class PrismManager : MonoBehaviour
 {
@@ -128,6 +130,7 @@ public class PrismManager : MonoBehaviour
         var prismA = collision.a;
         var prismB = collision.b;
 
+        GJK.Has3Dimensions = Math.Abs(maxPrismScaleY) > float.Epsilon;
         bool Collided = GJK.Execute(prismA.points, prismB.points);
         
         
