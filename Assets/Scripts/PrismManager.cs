@@ -67,7 +67,7 @@ public class PrismManager : MonoBehaviour
         }
 
         //_quadTree.GenerateQuadTreeOfPts(prismObjects);
-        _quadTree.GenerateQuadTreeOfPts(prismObjects, ref _quadTree.root);
+
         _ocTree.GenerateQuadTreeOfPts(prismObjects, ref _ocTree.root);
 
         StartCoroutine(Run());
@@ -93,9 +93,9 @@ public class PrismManager : MonoBehaviour
     IEnumerator Run()
     {
         yield return null;
-
         while (true)
         {
+            _quadTree.GenerateQuadTreeOfPts(prismObjects, ref _quadTree.root);
             foreach (var prism in prisms)
             {
                 prismColliding[prism] = false;
