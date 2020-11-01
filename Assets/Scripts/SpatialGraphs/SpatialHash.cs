@@ -56,6 +56,7 @@ public class SpatialHash : SpatialGraph {
             
             ret.AddRange(prisms[i]);
 
+            //Clean up own hash table
             while (ret.Contains(p))
                 ret.Remove(p);
         }
