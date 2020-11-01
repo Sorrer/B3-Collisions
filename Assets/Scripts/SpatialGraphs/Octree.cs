@@ -131,22 +131,22 @@ public class Octree : MonoBehaviour
 
         //DrawQuadTreeFrm(root);
 
-        int testIndex = GetBoundingQuadNodeIndex(testPoint.position, root);
-        
-        //Debug.Log(quadTreeNodes[testIndex].ID);
-        List<int> testPointNeighbours = new List<int>();
-        //Debug.Log(D_NeighbouringToCheckCells(ValidQuadNodeOfID(root, GetIntsFromNum(testIndex), offset), ref testPointNeighbours).Count);
-        D_NeighbouringToCheckCells(GetOcFrmId(GetIntsFromNum(testIndex), offset), ref testPointNeighbours);
-        for (int i = 0; i < testPointNeighbours.Count; i++)
-        {
-            //Debug.Log(testPointNeighbours[i]);
-            OcNode curQuad = GetOcFrmId(GetIntsFromNum(testPointNeighbours[i]), offset);
-            if(curQuad != null)
-            {
-                //Debug.Log("Drawing quad : " + curQuad.ID);
-                curQuad.DrawOc(Color.cyan);
-            }
-        }
+        //int testIndex = GetBoundingQuadNodeIndex(testPoint.position, root);
+        //
+        ////Debug.Log(quadTreeNodes[testIndex].ID);
+        //List<int> testPointNeighbours = new List<int>();
+        ////Debug.Log(D_NeighbouringToCheckCells(ValidQuadNodeOfID(root, GetIntsFromNum(testIndex), offset), ref testPointNeighbours).Count);
+        //D_NeighbouringToCheckCells(GetOcFrmId(GetIntsFromNum(testIndex), offset), ref testPointNeighbours);
+        //for (int i = 0; i < testPointNeighbours.Count; i++)
+        //{
+        //    //Debug.Log(testPointNeighbours[i]);
+        //    OcNode curQuad = GetOcFrmId(GetIntsFromNum(testPointNeighbours[i]), offset);
+        //    if(curQuad != null)
+        //    {
+        //        //Debug.Log("Drawing quad : " + curQuad.ID);
+        //        curQuad.DrawOc(Color.cyan);
+        //    }
+        //}
 
         //List<QuadNode> leafsOfThis = new List<QuadNode>();
         //LeafNodes(GetQuadFrmID(testIndex, offset), ref leafsOfThis);
@@ -389,6 +389,41 @@ public class Octree : MonoBehaviour
 
                 AddNeighbourNodeToList(botLft, ref returnIndecies, root);
             }
+        }
+
+        if (HasForward(nodeIDs))
+        {
+            int[] forNeigh = GetForNeighbour(nodeIDs);
+
+            AddNeighbourNodeToList(forNeigh, ref returnIndecies, root);
+
+            if (HasUp(forNeigh))
+            {
+                int[] upFor = GetUpNeighbour(forNeigh);
+
+                AddNeighbourNodeToList(upFor, ref returnIndecies, root);
+
+                if (HasLeft(upFor))
+                {
+                    int[] upForLft = GetLeftNeighbour(upFor);
+
+                    AddNeighbourNodeToList(upForLft, ref returnIndecies, root);
+                }
+            }
+            if (HasLeft(forNeigh))
+            {
+                int[] forLft = GetLeftNeighbour(forNeigh);
+
+                AddNeighbourNodeToList(forLft, ref returnIndecies, root);
+
+                if (HasDown(forLft))
+                {
+                    int[] forLftBotm = GetDownNeighbour(forLft);
+
+                    AddNeighbourNodeToList(forLftBotm, ref returnIndecies, root);
+                }
+            }
+
         }
     }
 
