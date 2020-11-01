@@ -359,13 +359,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prismCount: 50
   prismRegionRadiusXZ: 5
-  prismRegionRadiusY: 0
+  prismRegionRadiusY: 3
   maxPrismScaleXZ: 3
-  maxPrismScaleY: 0
+  maxPrismScaleY: 1
   regularPrismPrefab: {fileID: 6468098775448787195, guid: 04d1cda6b2b9eb64b92c80bdaa0756a4,
     type: 3}
   irregularPrismPrefab: {fileID: 2523424855270817504, guid: 08cd34c5797175b4584644dfb0e6a0c0,
     type: 3}
+  testOctree: 1
 --- !u!4 &1608525109
 Transform:
   m_ObjectHideFlags: 0
@@ -410,22 +411,22 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1608525107}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 234fcf374bf604d49883d2f1a2cae01b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxDepth: 4
+  maxDepth: 6
   maxPointsInCell: 1
   maxNeighbourDepth: 3
-  totalSize: 5
+  totalSize: 8
   drawFullTree: 1
   drawOnlyThisDepth: 0
   testPoint: {fileID: 770520999}
   lastLayerIndex: 0
   maxPrizimSIze: 3
-  clampMaxDepth: 5
-  offset: 1
+  clampMaxDepth: 7
+  offset: 0
 --- !u!1 &1895938546
 GameObject:
   m_ObjectHideFlags: 0

@@ -114,10 +114,7 @@ public class Octree : MonoBehaviour
         {
             if (drawFullTree)
             {
-                if(leafNodes[i].depth == drawOnlyThisDepth)
-                {
-                    leafNodes[i].DrawOc(Color.yellow);
-                }
+                leafNodes[i].DrawOc(Color.yellow);
             }
             //Debug.Log(leafNodes[i].ID +" : " + leafNodes[i].occupyingPoints.Count);
             //if (leafNodes[i].occupyingPoints.Count > 0)
