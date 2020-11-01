@@ -357,15 +357,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27f617c0ea9733b44b50c37923d5c7d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  prismCount: 50
+  prismCount: 15
   prismRegionRadiusXZ: 5
-  prismRegionRadiusY: 0
+  prismRegionRadiusY: 5
   maxPrismScaleXZ: 3
-  maxPrismScaleY: 0
+  maxPrismScaleY: 3
   regularPrismPrefab: {fileID: 6468098775448787195, guid: 04d1cda6b2b9eb64b92c80bdaa0756a4,
     type: 3}
   irregularPrismPrefab: {fileID: 2523424855270817504, guid: 08cd34c5797175b4584644dfb0e6a0c0,
     type: 3}
+  testOctree: 1
+  onlyXZ: 1
 --- !u!4 &1608525109
 Transform:
   m_ObjectHideFlags: 0
@@ -410,7 +412,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1608525107}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 234fcf374bf604d49883d2f1a2cae01b, type: 3}
   m_Name: 

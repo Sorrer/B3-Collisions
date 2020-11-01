@@ -27,7 +27,8 @@ public class PrismManager : MonoBehaviour
     private Octree _ocTree;
 
     public bool testOctree = true;
-
+    public bool onlyXZ = false;
+    
     private SpatialHash spatialHash;
     
     #region Unity Functions
@@ -207,14 +208,32 @@ public class PrismManager : MonoBehaviour
         var prismA = collision.a;
         var prismB = collision.b;
 
-        GJK.Has3Dimensions = Math.Abs(maxPrismScaleY) > float.Epsilon;
+        //GJK.Has3Dimensions = Math.Abs(maxPrismScaleY) > float.Epsilon;
+
+        Vector3[] pointsA = new Vector3[prismA.points.Length];
+        Vector3[] pointsB = new Vector3[prismB.points.Length];
+        
+        if (onlyXZ) {
+            for (int i = 0; i < prismA.points.Length; i++) {
+                pointsA[i] = prismA.points[i];
+                pointsA[i].y = 0;
+            }
+            for (int i = 0; i < prismB.points.Length; i++) {
+                pointsB[i] = prismB.points[i];
+                pointsB[i].y = 0;
+            }
+        } else {
+            pointsA = prismA.points;
+            pointsB = prismB.points;
+        }
+        
         List<Vector3> Simplex;
-        bool Collided = GJK.Execute(prismA.points, prismB.points, out Simplex);
+        bool Collided = GJK.Execute(pointsA, pointsB, out Simplex);
 
         if (Collided) {
             float depth;
             Vector3 normal;
-            EPA.Execute(prismA.points, prismB.points, Simplex, out depth, out normal);
+            EPA.Execute(pointsA, pointsB, Simplex, out depth, out normal);
             collision.penetrationDepthVectorAB = depth * normal;
             
             //Debug.Log("Depth = " + depth);
