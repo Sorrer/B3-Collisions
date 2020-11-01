@@ -203,6 +203,9 @@ public class Octree : MonoBehaviour
 
         //maxDepth = Mathf.Clamp(maxDepth, 0, clampMaxDepth);
 
+        leafNodes.Clear();
+        root = null;
+
         for (int i = 0; i < points.Count; i++)
         {
             InsertPoint(points[i].transform.position, i, ref root, null, -1);
@@ -439,6 +442,42 @@ public class Octree : MonoBehaviour
             }
         }
 
+
+        if (HasForward(nodeIDs))
+        {
+            int[] forNeigh = GetForNeighbour(nodeIDs);
+
+            D_AddNeighbourNodeToList(forNeigh, ref nodeIndecies, ref returnIndecies, root);
+
+            if (HasUp(forNeigh))
+            {
+                int[] upFor = GetUpNeighbour(forNeigh);
+
+                D_AddNeighbourNodeToList(upFor, ref nodeIndecies, ref returnIndecies, root);
+
+                if (HasLeft(upFor))
+                {
+                    int[] upForLft = GetLeftNeighbour(upFor);
+
+                    D_AddNeighbourNodeToList(upForLft, ref nodeIndecies, ref returnIndecies, root);
+                }
+            }
+            if (HasLeft(forNeigh))
+            {
+                int[] forLft = GetLeftNeighbour(forNeigh);
+
+                D_AddNeighbourNodeToList(forLft, ref nodeIndecies, ref returnIndecies, root);
+
+                if (HasDown(forLft))
+                {
+                    int[] forLftBotm = GetDownNeighbour(forLft);
+
+                    D_AddNeighbourNodeToList(forLftBotm, ref nodeIndecies, ref returnIndecies, root);
+                }
+            }
+
+        }
+
         return returnIndecies;
     }
 
@@ -649,6 +688,35 @@ public class Octree : MonoBehaviour
         return downNode;
     }
 
+    private int[] GetForNeighbour(int[] a)
+    {
+        int startFlipFrmIndex = a.Length - 1; ;
+        for (int i = a.Length - 1; i >= 0; i--)
+        {
+            if (a[i] == 2 || a[i] == 4 || a[i] == 6 || a[i] == 8)
+            {
+                startFlipFrmIndex = i - 1;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if (startFlipFrmIndex < 0)
+        {
+            return new int[0];
+        }
+
+        int[] downNode = (int[])a.Clone();
+        for (int i = startFlipFrmIndex; i < a.Length; i++)
+        {
+            downNode[i] = FlipTableFor(downNode[i]);
+        }
+
+        return downNode;
+    }
+
     private int FlipTableVert(int a)
     {
         switch (a)
@@ -694,6 +762,31 @@ public class Octree : MonoBehaviour
                 return 3;
             case 8:
                 return 4;
+            default:
+                return -1;
+        }
+    }
+
+    private int FlipTableFor(int a)
+    {
+        switch (a)
+        {
+            case 1:
+                return 2;
+            case 2:
+                return 1;
+            case 3:
+                return 4;
+            case 4:
+                return 2;
+            case 5:
+                return 6;
+            case 6:
+                return 5;
+            case 7:
+                return 8;
+            case 8:
+                return 7;
             default:
                 return -1;
         }
