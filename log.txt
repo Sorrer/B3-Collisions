@@ -1,0 +1,35 @@
+6be4e0b was Sorrer, 65 seconds ago, message: Adjusted Octree
+7192f68 was Sorrer, 63 minutes ago, message: Merged
+d0c44bd was BleblebleU, 2 hours ago, message: Octreee tested for extra credit 3
+3daf307 was BleblebleU, 2 hours ago, message: Octree Forward
+29f4b56 was Sorrer, 3 hours ago, message: Fixed quad tree arrangement for moving objects.
+1d42da0 was Sorrer, 3 hours ago, message: Merge branch 'master' of https://github.com/Sorrer/B3-Comp-Graphics.git
+ea59846 was BleblebleU, 3 hours ago, message: Merge branch 'master' of https://github.com/Sorrer/B3-Comp-Graphics
+be62afd was BleblebleU, 3 hours ago, message: pushing the leaky
+fdbe3de was Sorrer, 3 hours ago, message: Build quadtree in loop
+bdaff12 was Sorrer, 3 hours ago, message: Finished 2D EPA
+502cc2e was Sorrer, 5 hours ago, message: Merge branch 'master' of https://github.com/Sorrer/B3-Comp-Graphics.git
+da4ec75 was Sorrer, 5 hours ago, message: Adjusted prism and GJK
+dc9f7b4 was BleblebleU, 30 hours ago, message: Octrees
+9e4199f was BleblebleU, 31 hours ago, message: Merge branch 'master' of https://github.com/Sorrer/B3-Comp-Graphics
+4ba2fbb was BleblebleU, 31 hours ago, message: Massive performance boost
+860c6bd was Jared Tulayan, 2 days ago, message: Implement GetNeighbors() method
+eb60064 was Jared Tulayan, 2 days ago, message: Fix hash func
+540726b was Jared Tulayan, 2 days ago, message: Merge branch 'master' of github.com:Sorrer/B3-Comp-Graphics
+37bf4d6 was Jared Tulayan, 2 days ago, message: Add QuadTree meta
+fa80bde was BleblebleU, 3 days ago, message: Fixed a few merge bugs
+281593a was BleblebleU, 3 days ago, message: Merge branch 'master' of https://github.com/Sorrer/B3-Comp-Graphics
+e1c118f was BleblebleU, 3 days ago, message: Updated/Optimized Quad Tree
+f9192e4 was Jared Tulayan, 3 days ago, message: Merge branch 'master' of github.com:Sorrer/B3-Comp-Graphics
+99d2a0e was Jared Tulayan, 3 days ago, message: Draft implmentation of SpatialHash
+0c06413 was Utkarsh Jha, 3 days ago, message: Quad tree Implemented.
+9ab1fdb was Jared Tulayan, 3 days ago, message: Merge branch 'master' of github.com:Sorrer/B3-Comp-Graphics
+a425123 was Jared Tulayan, 3 days ago, message: Begin work with Spatial Hash
+c642ec1 was Sorrer, 4 days ago, message: Implemented basic 2D GJK
+43e0ef7 was Sorrer, 4 days ago, message: Refreshed for .gitignore
+838a9a1 was Sorrer, 4 days ago, message: Merged .gitignore
+295dd43 was Sorrer, 4 days ago, message: Added spatial graph interface
+3f7df8b was Sorrer, 4 days ago, message: Added gitignore
+8796c5c was Jared Tulayan, 4 days ago, message: Add assignment pdf
+eee02a9 was Jared Tulayan, 4 days ago, message: Add .gitignore
+8477a31 was Sorrer, 7 days ago, message: Cloned repo
